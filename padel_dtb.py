@@ -8,7 +8,7 @@ class PaDel_Dtb:
 	def __init__(self):
 		self.pdl_file = './pdl_save.p'
 		if os.path.isfile(self.pdl_file):
-			#load self.pdl from pickle
+			print ' loading pickled PaDel data'
 			f = open(self.pdl_file,'r')
 			self.pdl = pickle.load(f)
 			f.close()
@@ -21,8 +21,8 @@ class PaDel_Dtb:
 		f.close()	
 
 	def add_pdl(self,name_in):
-		print 'adding padel data:', name_in
-		pdl_file = './mols/{0}/mdl_padel/{0}.pdl'.format(name_in)
+		#print 'adding padel data:', name_in
+		pdl_file = './mol_data/{0}/{0}.pdl'.format(name_in)
 		f = open(pdl_file,'r')
 		line1 = f.readline()
 		line2 = f.readline()
@@ -52,11 +52,14 @@ class PaDel_Dtb:
 					pdl_features[f_name] = f_val
 				except:
 					raise ValueError(
-						'Value {} ({}) not understood for {}: [{}]'.format(
+						'Value {} ({}) not understood for {}: {}'.format(
 						i,f_name,name_in,vals[i]))
 		self.pdl[name_in] = pdl_features	
 
 	def make_pdl_feats(self):
+		#this builds a dict keyed with PaDel feature names
+		#each entry in this dict is also a dict, keyed by molecule names
+		print ' building PaDel descriptor dict'
 		self.pdl_feats_all = {} 
 		for name in sd.mol_list:
 			for k in self.pdl[name].keys():
@@ -65,7 +68,7 @@ class PaDel_Dtb:
 				self.pdl_feats_all[k][name] = self.pdl[name][k]
 		k_all = self.pdl_feats_all.keys()
 		nfeats = len(self.pdl_feats_all)
-		print 'total number of features: {}'.format(nfeats)	
+		print ' total number of features: {}'.format(nfeats)	
 		for j in range(nfeats):
 			vals_dict = self.pdl_feats_all[k_all[j]]
 			#key vals_dict with mol_names to extract set of values of feature j
@@ -78,20 +81,15 @@ class PaDel_Dtb:
 				del self.pdl_feats_all[k_all[j]]
 		k_all = self.pdl_feats_all.keys()
 		self.nfeats = len(self.pdl_feats_all)
-		print 'number of useful features: {}'.format(self.nfeats)	
+		print ' number of useful features: {}'.format(self.nfeats)	
 
-	def make_pdl_matrix(self):
+	def pdl_matrix(self):
 	        k = self.pdl_feats_all.keys()
-	        self.pdl_mat = np.zeros([sd.nmols,self.nfeats])
+	        pdl_mat = np.zeros([sd.nmols,self.nfeats])
 	        for j in range(self.nfeats):
 	                vals_dict = self.pdl_feats_all[k[j]]
 	                for i in range(sd.nmols):
-	                        self.pdl_mat[i,j] = vals_dict[sd.mol_list[i]]
-
-	def get_pdl_dist(self,name_1,name_2):
-		# get distance between two PaDel feature vectors
-        	idx1 = sd.idx_of_mol(name_1)
-        	idx2 = sd.idx_of_mol(name_2)
-        	return np.linalg.norm(self.pdl_mat[idx1,:]-self.pdl_mat[idx2,:])
+	                        pdl_mat[i,j] = vals_dict[sd.mol_list[i]]
+		return pdl_mat
 
 

@@ -6,24 +6,24 @@ import struct_data as sd
 class Cmat_Dtb:
 
 	def __init__(self):
-		print 'initializing cmat data...'
+		# load pickle or start a new dict
 		self.cmat_file = './cmat_save.p'
 		if os.path.isfile(self.cmat_file):
-			print 'loading cmat...'
+			print ' loading pickled cmat data.'
 			f = open(self.cmat_file,'r')
 			self.cmat = pickle.load(f)
 			f.close()
 		else:
-			self.cmat = [None]*sd.nfuncs
+			self.cmat = {} 
 
 	def save(self):
+		# pickle dump
 		f = open(self.cmat_file,'w')
 		pickle.dump(self.cmat, f)
 		f.close()	
 
-	def add_cmat(self,func_indx,name_in,cmat_in):
-		print 'adding cmat:',sd.funcs[func_indx], name_in
-		self.cmat[func_indx][name_in] = cmat_in
+	def add_cmat(self,name_in,cmat_in):
+		self.cmat[name_in] = cmat_in
 
 	def sort_matrix(self,cmat_in):
 		# sort the coulomb matrix in order of increasing row norms
@@ -66,17 +66,17 @@ class Cmat_Dtb:
 		mat_out[0:s_in[0],0:s_in[1]] = mat_in
 		return mat_out
 
-	def cmat_matrix(self,func_indx):
+	def cmat_matrix(self):
 		# returns a matrix of sorted, padded, flattened coulomb matrices,
 		# for use as input data.
 		# return shape is n_samples by n_features,
 		# n_features = max(n_atoms)**2
-		nat_max = np.max([sd.mols[name].struct.natoms for name in sd.mol_list])
+		nat_max = np.max([sd.structs[name].natoms for name in sd.mol_list])
 		dim = nat_max**2
 		mat_out = np.zeros([sd.nmols,int(dim)])
 		for k in range(sd.nmols):
 			name = sd.mol_list[k]
-			cmat = self.cmat[func_indx][name]
+			cmat = self.cmat[name]
 			cmat = self.sort_matrix(cmat)
 			cmat = self.pad_matrix(cmat,nat_max)
 			cmat = np.reshape(cmat,[1,dim])
