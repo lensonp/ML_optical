@@ -1,14 +1,14 @@
 import numpy as np
-#import scipy.optimize as scopt
-#import pickle
 import ML_plot_routines 
 import regress
 import struct_data as sd
 from cmat_dtb import Cmat_Dtb
 from padel_dtb import PaDel_Dtb
+#import matplotlib.pyplot as plt
 #import time
 #import copy
-import matplotlib.pyplot as plt
+#import scipy.optimize as scopt
+#import pickle
 #import sklearn
 #from sklearn import svm
 #from sklearn import cross_validation as cv

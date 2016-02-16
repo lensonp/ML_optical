@@ -4,8 +4,8 @@ from sklearn.decomposition import PCA
 from sklearn import linear_model as LM
 import matplotlib.markers as mk
 from matplotlib import gridspec
-import copy
-import regress
+#import copy
+#import regress
 
 def surf_loocv(params,xdist,loocv,fignum):
 	param0 = params[0]

@@ -1,12 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import svm
-#from sklearn import cross_validation as cv
 import scipy.optimize as scopt
-import ML_plot_routines 
+#from sklearn import cross_validation as cv
+from sklearn import svm
 from sklearn import linear_model
 from sklearn.cross_decomposition import PLSRegression
-#import spectra_data as spd
 from sklearn.decomposition import PCA
 from sklearn.linear_model import Ridge
 from sklearn.cluster import KMeans
@@ -17,8 +15,9 @@ from sklearn.kernel_ridge import KernelRidge
 from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.neural_network import multilayer_perceptron as mlp
 #import scikit-learn.sklearn.neural_network.multilayer_perceptron.MLPRegressor
-import kernels as ckr 
-import time
+#import ML_plot_routines 
+#import kernels as ckr 
+#import time
 
 def standardize_cols(cols):
 	dims = np.shape(cols)
