@@ -4,7 +4,8 @@ A set of modules exploring scikit-learn-based ML models for predicting optical p
 
 
 ## Input data
-Current version runs two types of structural data. 
+Current version runs two types of structural data: 
+
 1. Atomic structure, encoded as distance or Coulomb matrices
 2. The features computed by the [PaDel molecular descriptor code](http://padel.nus.edu.sg/software/padeldescriptor/)
 which takes input from .mol structure files produced by [ChemAxon's Marvin](https://www.chemaxon.com/products/marvin/marvinsketch/)
@@ -26,7 +27,8 @@ one `MolStruct` for each of the molecule names in the file `mols.txt`.
 ### Running the code
 `python ML_optical.py` should do the trick.
 
-When `ML_optical.py` is run,
+When `ML_optical.py` is run:
+
 1. `struct_data.py` reads `mols.txt` and builds `MolStruct` objects
 2. Coulomb matrices are read from the `MolStruct` objects and stored in a `Cmat_Dtb` (`cmat_dtb.py`)
 3. PaDel descriptor outputs are read in to a `PaDel_Dtb` object (`padel_dtb.py`)
@@ -39,6 +41,7 @@ When `ML_optical.py` is run,
 	to aid in feature and parameter selection
  
 Versions used for development:
+
 * `scikit-learn` 
 * `python`
 
