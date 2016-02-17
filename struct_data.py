@@ -18,8 +18,7 @@ structs={}
 pks={}
 pks_comp={}
 
-for i in range(0,nmols):
-        name_i = mol_list[i]
+for name_i in mol_list:
 	struct_add = MolStruct(name_i)
 	structs[name_i] = struct_add
 	pks_file = 'mol_data/{}/w_pk.dat'.format(name_i)
@@ -37,7 +36,7 @@ def pkN_all(i_pk):
 	pkN_err = []
 	for molname in mol_list:
 		wpk=pks[molname][i_pk]
-		wpk_comp=pks[molname][i_pk]
+		wpk_comp=pks_comp[molname][i_pk]
 		if not pks_comp[molname][i_pk] == 0:
 			wpk_err=wpk_comp-wpk
 		else:

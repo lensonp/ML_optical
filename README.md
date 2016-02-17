@@ -7,13 +7,19 @@ but can be used for arbitrary inputs and targets
 by loading data from files `ML_Xvals.dat` and `ML_yvals.dat`.
 Example data sets are included.
 
-
-### Disclaimer
+### Notes 
 
 These modules were a working part of a larger research project
 dealing with a larger data set.
-They have not met any bottlenecks, 
-so have not been optimized for efficiency.
+They are meant to streamline the validation of models
+for dozens of relatively small but high-dimensional data sets.
+They were written to be able to explore new data sets and new models
+with minimal reproduction of code.
+Parameters and methods can be adjusted by editing the `ML_optical.py` module.
+New models can be added by importing them to the `regress.py` module 
+and then writing a one-line build case for that method in `regress.py`.
+The code is left at that level of polish 
+in order to remain flexible.
 
 
 ## Data set
