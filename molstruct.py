@@ -5,14 +5,14 @@ class MolStruct:
 	def __init__(self,name_in):
 		self.name = name_in
 		self.readfiles()
+		# z_dict maps atom name to atomic number - should be expanded to its own module for a more general atom set.
 		self.z_dict={'H':1, 'C':6, 'O':8}
 		self.get_atom_types()
 		self.compute_dmat()
 		self.compute_cmat()
 
 	def readfiles(self):
-		self.zmax = 80 
-		self.pop_type = np.zeros(self.zmax+1) #population of each type
+		# read in the atoms and positions from mol_data/<mol>/<mol>_svwn.xyz
 		f = open('mol_data/{0}/{0}_svwn.xyz'.format(self.name),'r')
 		self.natoms = int(f.readline())
 		self.at_z = np.zeros(self.natoms)

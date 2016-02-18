@@ -21,7 +21,8 @@ class PaDel_Dtb:
 		f.close()	
 
 	def add_pdl(self,name_in):
-		#print 'adding padel data:', name_in
+		# builds a dictionary of PaDel features for the input molecule
+		# from mol_data/<mol>/<mol>.pdl
 		pdl_file = './mol_data/{0}/{0}.pdl'.format(name_in)
 		f = open(pdl_file,'r')
 		line1 = f.readline()
@@ -57,8 +58,8 @@ class PaDel_Dtb:
 		self.pdl[name_in] = pdl_features	
 
 	def make_pdl_feats(self):
-		#this builds a dict keyed with PaDel feature names
-		#each entry in this dict is also a dict, keyed by molecule names
+		# this builds a PaDel feature dict 
+		# each entry in this dict is also a dict, keyed by molecule names
 		print ' building PaDel descriptor dict'
 		self.pdl_feats_all = {} 
 		for name in sd.mol_list:
@@ -84,6 +85,10 @@ class PaDel_Dtb:
 		print ' number of useful features: {}'.format(self.nfeats)	
 
 	def pdl_matrix(self):
+		# this returns a matrix of values taken from the PaDel feature dict
+		# for use as input data.
+		# return shape is n_samples by n_features,
+		# n_features = number of useful PaDel features over the molecule set
 	        k = self.pdl_feats_all.keys()
 	        pdl_mat = np.zeros([sd.nmols,self.nfeats])
 	        for j in range(self.nfeats):

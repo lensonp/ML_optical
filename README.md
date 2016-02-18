@@ -35,6 +35,25 @@ and supervised classification (SVM, logistic regression, GDA).
 I left these other functionalities 
 out of this version to simplify the code.
 
+## Code structure
+
+### Script
+The main run script is `ML_optical.py`. 
+
+### Classes
+ 1. `MolStruct` (`molstruct.py`) - loads and operates on molecule structure data
+ 2. `Cmat_Dtb` (`cmat_dtb.py`) - operates on Coulomb matrix data 
+ 3. `PaDel_Dtb` (`padel_dtb.py`) - operates on PaDel molecule descriptor data 
+Note: This version of the code could have `cmat_dtb.py` and `padel_dtb.py` as modules.
+They are classes because a previous version of the code instantiated multiple
+distinct databases of each type. 
+
+### Modules
+ 1. `struct_data.py` - builds `molstruct.py` objects for molecules in `mols.txt`
+ 2. `ML_plot_routines.py` - some canned plotting routines for visualizing ML results
+ 3. `regress.py` - a module for interfacing with a variety of `scikit-learn`-based regression models
+Note: Addition of new ML models can be accomplished by adding a build method (2 lines) to `regress.py`
+
 ## Data set
 
 ### Input structural features or other user-specified data
@@ -109,7 +128,7 @@ When `ML_optical.py` is run:
 	(control over the models and parameters is best accomplished by editing `ML_optical.py`) 
 7. Plots of training and (leave-one-out) cross-validation errors are generated from `ML_plot_routines.py`
  
-Versions used for development:
+Versions used for development (on OSX Yosemite):
 * `scikit-learn` 0.17 
 * `python` 2.7.6
 

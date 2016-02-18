@@ -3,6 +3,7 @@ import numpy as np
 
 print 'loading molecule structure data'
 
+# read in molecule names
 mol_file='mols.txt'
 f=open(mol_file,'r')
 mol_list=[]
@@ -10,6 +11,7 @@ for k,line in enumerate(f):
 	mol_list.append(line.split()[0])
 nmols=len(mol_list)
 
+# data will be stored in dicts
 structs={}
 pks={}
 pks_comp={}
@@ -21,11 +23,12 @@ for name_i in mol_list:
 	f=open(pks_file,'r')
 	pks_comp[name_i] = np.array(f.readline().split(),dtype=float) 
 	pks[name_i] = np.array(f.readline().split(),dtype=float) 
-	#print pks_comp[name_i]
-	#print pks[name_i]
 
 print 'struct_data finished loading mols.txt'
 
+# process the data from the dicts in this module,
+# return 3-tuple of the absorption peak data:
+# (measured, computed, error)
 def pkN_all(i_pk):
 	pkN = []
 	pkN_comp = []

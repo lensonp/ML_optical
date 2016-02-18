@@ -6,6 +6,25 @@ from sklearn.svm import SVR
 from sklearn.kernel_ridge import KernelRidge
 #from sklearn.neural_network import multilayer_perceptron as mlp
 
+# BUILD REGRESSION OBJECTS with some default parameters and one or two input parameters
+def build_regressor(method,p):
+	#build a regressor object and plug in parameters p
+	if method == 'PLS':
+		rg = PLSRegression(n_components=p)
+	elif method == 'LASSO':
+		rg = Lasso(alpha=10**p)
+	elif method == 'RR':
+		rg = Ridge(alpha=10**p)
+	elif method == 'KRR':
+		rg = KernelRidge(alpha=10**p[0],kernel='rbf',gamma=10**p[1]) 
+#	elif method == 'MLP':
+#		rg = mlp.MLPRegressor(alpha=10**p,activation='relu',algorithm='l-bfgs',hidden_layer_sizes=(10,)) 
+	else:
+		raise ValueError('method not supported: {}'.format(method))
+	return rg
+
+# test a regression technique: return the useful portions of X and y,
+# the mean distance of each sample from the rest, and the predicted y
 def test_regressor(X,y,method,param_set,stdize=False):
 	# clean up any nans and standardize the data
 	X,y,mean_y,std_y,n_samples = prep_data(X,y,stdize)
@@ -27,6 +46,8 @@ def test_regressor(X,y,method,param_set,stdize=False):
 		y = y*std_y + mean_y 
 	return X, y, d, y_pred
 
+# cross-validate a regression technique: return the useful portions of X and y,
+# the mean distance of each sample from the rest, and the cross-predicted y
 def cv_regressor(X,y,method,param_set,stdize=False):
 	X,y,mean_y,std_y,n_samples = prep_data(X,y,stdize)
 	d = np.array( [ np.mean( [np.linalg.norm(X[j,:]-X[m,:]) for m in range(n_samples)] ) for j in range(n_samples) ] )
@@ -53,7 +74,6 @@ def cv_regressor(X,y,method,param_set,stdize=False):
 	return X, y, d, y_val
 
 # data preparation: remove nans, standardize if needed
-
 def prep_data(X,y,stdize):
 	X,y = elim_nan(X,y)
 	X = elim_const(X)
@@ -66,25 +86,6 @@ def prep_data(X,y,stdize):
 		y = (y - mean_y)/std_y
 		X = standardize_cols(X)
 	return X,y,mean_y,std_y,n_samples
-
-
-# ROUTINE FOR BUILDING REGRESSION OBJECTS
-
-def build_regressor(method,p):
-	#build a regressor object and plug in parameters p
-	if method == 'PLS':
-		rg = PLSRegression(n_components=p)
-	elif method == 'LASSO':
-		rg = Lasso(alpha=10**p)
-	elif method == 'RR':
-		rg = Ridge(alpha=10**p)
-	elif method == 'KRR':
-		rg = KernelRidge(alpha=10**p[0],kernel='rbf',gamma=10**p[1]) 
-#	elif method == 'MLP':
-#		rg = mlp.MLPRegressor(alpha=10**p,activation='relu',algorithm='l-bfgs',hidden_layer_sizes=(10,)) 
-	else:
-		raise ValueError('method not supported: {}'.format(method))
-	return rg
 
 # beyond this point: minor data management routines
 
