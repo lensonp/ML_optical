@@ -27,11 +27,12 @@ and then writing a build case for that method in
 This level of completeness
 leaves the code flexible for expansion and/or re-purposing.
 
-The full set of modules from this project interfaces with
+In the past, these modules included
 the full range of regression techniques available in scikit-learn
-including the development version (for multilayer perceptron models)
-and includes unsupervised feature exploration (PCA, clustering)
-and supervised classification (SVM, logistic regression, GDA).
+including the development version (for multilayer perceptron models),
+unsupervised feature exploration (PCA, clustering),
+supervised classification (SVM, logistic regression, GDA),
+and a module of custom kernels specific to structural features.
 I left these other functionalities 
 out of this version to simplify the code.
 
@@ -133,8 +134,11 @@ When `ML_optical.py` is run:
 	(precise control over the models and parameters is best accomplished by editing the first few lines of `ML_optical.py`) 
 7. Plots of training and (leave-one-out) cross-validation errors are generated using `ML_plot_routines.py`
  
-Versions used for development:
+### Versions used for development
 * `scikit-learn` 0.17 
 * `python` 2.7.6
 
+### References
+The works used to estimate absorption peak data
+can all be found in the included `ML_optical.bib` file 
 
