@@ -6,14 +6,6 @@ from padel_dtb import PaDel_Dtb
 import ML_plot_routines 
 import time
 import matplotlib.pyplot as plt
-#import copy
-#import scipy.optimize as scopt
-#import pickle
-#import sklearn
-#from sklearn import svm
-#from sklearn import cross_validation as cv
-#from sklearn import linear_model
-#from sklearn.cross_decomposition import PLSRegression
 
 print '------------- ML optical code ----------------\n', time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) 
 
@@ -37,8 +29,8 @@ if build_pdl:
 	#pdldata.save() # generates a pickle file
 
 # USER IO 
-X_prompt='Select feature vectors: \n 0: use Coulomb matrix data \n 1: use PaDel feature data \n 2: read file ML_Xvals.dat \n >> '
-y_prompt='Select targets:\n 0: use absorption pk data \n 1: use computed pk data \n 2: use computed-measured pk error data \n 3: read file ML_yvals.dat \n >> '
+X_prompt='Select feature vectors: \n 0: use Coulomb matrix data \n 1: use PaDel feature data \n 2: read files ML_Xvals.dat and ML_yvals.dat \n >> '
+y_prompt='Select targets:\n 0: use absorption pk data \n 1: use computed pk data \n 2: use computed-measured pk error data \n >> '
 run_ML=True
 if run_ML:
 	X_flag = input(X_prompt)
@@ -49,33 +41,32 @@ if run_ML:
 	elif X_flag == 2:
 		print 'loading ML_Xvals.dat'
 		Xvals = np.array( [ np.array(line.split(),dtype=float) for k,line in enumerate(open('ML_Xvals.dat','r')) ] )
-	else:
-		raise ValueError('selection not understood: {} '.format(X_flag))
-	y_flag = int(input(y_prompt))
-	if y_flag >= 0 and y_flag <= 2:
-		i_pk = int(input('which pk index? (enter non-negative integer, 0 = lowest peak) \n >> '))
-		yvals,y_comp,y_pkerr = sd.pkN_all(i_pk) 
-		if y_flag == 1:
-			yvals = y_comp
-		if y_flag == 2:
-			yvals = y_pkerr
-	elif y_flag == 3:
-		print 'loading ML_yvals.dat'
 		yvals = np.array( [ float(line) for k,line in enumerate(open('ML_yvals.dat','r')) ] ) 
 	else:
-		raise ValueError('selection not understood: {} '.format(y_flag))
+		raise ValueError('selection not understood: {} '.format(X_flag))
+	if not X_flag == 2:
+		y_flag = int(input(y_prompt))
+		i_pk = int(input('which pk index? (enter non-negative integer, 0 = lowest peak, higher peaks = smaller data sets) \n >> '))
+		y_meas,y_comp,y_pkerr = sd.pkN_all(i_pk) 
+		if y_flag == 0:
+			yvals = y_meas
+		elif y_flag == 1:
+			yvals = y_comp
+		elif y_flag == 2:
+			yvals = y_pkerr
+		else:
+			raise ValueError('selection not understood: {} '.format(y_flag))
 
 	#######CHOICE##OF##REGRESSION
-	methods = ['RR','KRR','PLS','LASSO','MLP']
-	#run_flags = [True,False,False,False,False]
-	run_flags = [True,True,True,True,True]
-	two_p_flags = [False,True,False,False,False]
+	methods = ['RR','KRR','PLS','LASSO']#,'MLP']
+	run_flags = [True,True,True,True]
+	two_p_flags = [False,True,False,False]
 	#param ranges for each method
 	p0 = [ range(-3,5),	#RR l2 regularization
 		range(-3,3),	#KRR l2 regularization
 		range(1,10),	#PLS dimension
-		range(-4,3),	#LASSO l1 regularization
-		range(-3,6) ]	#MLP l2 regularization
+		range(-4,3) ]	#LASSO l1 regularization
+#		range(-3,6) ]	#MLP l2 regularization
 	p1 = range(-5,2) #kernel parameter for methods that take one
 	for j in range(len(methods)):
 		if run_flags[j]:

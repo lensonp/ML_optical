@@ -1,9 +1,5 @@
 from molstruct import MolStruct
 import numpy as np
-#import matplotlib.pyplot as plt
-#import regress
-#import plot_routines
-#import time
 
 print 'loading molecule structure data'
 
@@ -35,10 +31,13 @@ def pkN_all(i_pk):
 	pkN_comp = []
 	pkN_err = []
 	for molname in mol_list:
-		wpk=pks[molname][i_pk]
-		wpk_comp=pks_comp[molname][i_pk]
-		if not pks_comp[molname][i_pk] == 0:
-			wpk_err=wpk_comp-wpk
+		if len(pks_comp[molname]) > i_pk:
+			wpk=pks[molname][i_pk]
+			wpk_comp=pks_comp[molname][i_pk]
+			if not pks_comp[molname][i_pk] == 0:
+				wpk_err=wpk_comp-wpk
+			else:
+				wpk_err=float('nan')
 		else:
 			wpk_err=float('nan')
 		pkN.append(wpk)

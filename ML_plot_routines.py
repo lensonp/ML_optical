@@ -1,11 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-#from sklearn.decomposition import PCA
-#from sklearn import linear_model as LM
-#import matplotlib.markers as mk
-#from matplotlib import gridspec
-#import copy
-#import regress
 
 def plot_training(y_target,y_pred,fignum):
 	plt.figure(fignum)
@@ -32,8 +26,9 @@ def plot_validation(y_target,y_val,fignum):
 	y_target,y_val,n_out = remove_validation_outliers(y_target,y_val)
 	plt.plot(y_target,y_val,'or')
 	plt.plot((np.min(y_target),np.max(y_target)),(np.min(y_target),np.max(y_target)),'k')
-	plt.text(np.min(y_target), np.max(y_target)*0.9, '{} outliers removed'.format(n_out)) 
-	plt.text( np.min(y_target), np.max(y_target)*0.7, 'mean err of remaining: {}'.format(np.mean(np.abs(y_val-y_target))) ) 
+	space = (np.max(y_target)-np.min(y_target))*0.1
+	plt.text(np.min(y_target)+space, np.max(y_target)-space, '{} outliers removed'.format(n_out)) 
+	plt.text( np.min(y_target)+space, np.max(y_target)-2*space, 'mean err of remaining: {}'.format(np.mean(np.abs(y_val-y_target))) ) 
 	plt.xlabel('target value')
 	plt.ylabel('cross-validated value')
 

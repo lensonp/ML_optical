@@ -29,6 +29,7 @@ leaves the code flexible for expansion and/or re-purposing.
 
 The full set of modules from this project interfaces with
 the full range of regression techniques available in scikit-learn
+including the development version (for multilayer perceptron models)
 and includes unsupervised feature exploration (PCA, clustering)
 and supervised classification (SVM, logistic regression, GDA).
 I left these other functionalities 
@@ -39,10 +40,10 @@ out of this version to simplify the code.
 ### Input structural features or other user-specified data
 These modules load and operate on three types of data: 
 
-1. Atomic structure, encoded as distance or Coulomb matrices (`struct_data.py`, `cmat_dtb.py`)
+1. Atomic structure, encoded as Coulomb matrices (`struct_data.py`, `cmat_dtb.py`)
 2. The features computed by the [PaDel molecular descriptor code](http://padel.nus.edu.sg/software/padeldescriptor/)
-which takes input from .mol structure files produced by [ChemAxon's Marvin](https://www.chemaxon.com/products/marvin/marvinsketch/) 
-(`padel_dtb.py`)
+	which takes input from .mol structure files produced by [ChemAxon's Marvin](https://www.chemaxon.com/products/marvin/marvinsketch/) 
+	(`padel_dtb.py`)
 3. Anonymous inputs from a file, `ML_Xvals.dat`, containing a matrix of inputs, 
 where each row of the file is a feature vector of the sample.
 
@@ -96,6 +97,7 @@ which are then used as feature-vector inputs.
 `python ML_optical.py` should do the trick.
 
 When `ML_optical.py` is run:
+
 1. `struct_data.py` reads `mols.txt` and builds `MolStruct` objects
 2. Coulomb matrices are read from the `MolStruct` objects and stored in a `Cmat_Dtb` (`cmat_dtb.py`)
 3. PaDel descriptor outputs are read in to a `PaDel_Dtb` object (`padel_dtb.py`)
@@ -109,6 +111,6 @@ When `ML_optical.py` is run:
  
 Versions used for development:
 * `scikit-learn` 
-* `python`
+* `python` 2.7.6
 
 

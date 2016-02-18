@@ -1,13 +1,10 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
 from sklearn.svm import SVR
 from sklearn.kernel_ridge import KernelRidge
-from sklearn.neural_network import multilayer_perceptron as mlp
-#import kernels as ckr 
-#import time
+#from sklearn.neural_network import multilayer_perceptron as mlp
 
 def test_regressor(X,y,method,param_set,stdize=False):
 	# clean up any nans and standardize the data
@@ -83,8 +80,8 @@ def build_regressor(method,p):
 		rg = Ridge(alpha=10**p)
 	elif method == 'KRR':
 		rg = KernelRidge(alpha=10**p[0],kernel='rbf',gamma=10**p[1]) 
-	elif method == 'MLP':
-		rg = mlp.MLPRegressor(alpha=10**p,activation='relu',algorithm='l-bfgs',hidden_layer_sizes=(10,)) 
+#	elif method == 'MLP':
+#		rg = mlp.MLPRegressor(alpha=10**p,activation='relu',algorithm='l-bfgs',hidden_layer_sizes=(10,)) 
 	else:
 		raise ValueError('method not supported: {}'.format(method))
 	return rg

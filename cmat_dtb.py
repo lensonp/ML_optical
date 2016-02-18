@@ -38,26 +38,6 @@ class Cmat_Dtb:
 		cmat_out = np.dot(perm_left,np.dot(cmat_in,perm_right)) 
 		return cmat_out
 
-	def get_cmat_dist(self,cmat1,cmat2,norm_order='fro'):
-		# gets the distance separating two coulomb matrices cmat1 and cmat2
-		# sorts both matrices by row norm, pads smaller matrix with zeros
-		cmat1 = self.sort_matrix(cmat1)
-		cmat2 = self.sort_matrix(cmat2)
-		s1 = cmat1.shape
-		d1 = s1[0]
-		s2 = cmat2.shape
-		d2 = s2[0]
-		if d2 < d1:
-			cmat_small = cmat2
-			cmat_large = cmat1
-		else:
-			cmat_small = cmat1
-			cmat_large = cmat2
-		#pad cmat_small with zeros
-		cmat_small = self.pad_matrix(cmat_small,max([d1,d2]))
-		dist = np.linalg.norm(cmat_large-cmat_small,ord=norm_order)
-		return dist
-
 	def pad_matrix(self,mat_in,nd):
 		# pads an input matrix mat_in with zeros up to nd dimensions,
 		# populates the upper left corner with mat_in 
