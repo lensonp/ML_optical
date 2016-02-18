@@ -110,7 +110,7 @@ When `ML_optical.py` is run:
 7. Plots of training and (leave-one-out) cross-validation errors are generated from `ML_plot_routines.py`
  
 Versions used for development:
-* `scikit-learn` 
+* `scikit-learn` 0.17 
 * `python` 2.7.6
 
 
