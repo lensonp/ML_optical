@@ -44,15 +44,18 @@ The main run script is `ML_optical.py`.
  1. `MolStruct` (`molstruct.py`) - loads and operates on molecule structure data
  2. `Cmat_Dtb` (`cmat_dtb.py`) - operates on Coulomb matrix data 
  3. `PaDel_Dtb` (`padel_dtb.py`) - operates on PaDel molecule descriptor data 
+
 Note: This version of the code could have `cmat_dtb.py` and `padel_dtb.py` as modules.
 They are classes because a previous version of the code instantiated multiple
 distinct databases of each type. 
 
 ### Modules
- 1. `struct_data.py` - builds `molstruct.py` objects for molecules in `mols.txt`
- 2. `ML_plot_routines.py` - some canned plotting routines for visualizing ML results
+ 1. `struct_data.py` - builds and operates on `MolStruct` objects for all molecules in `mols.txt`
+ 2. `ML_plot_routines.py` - plotting routines for visualizing ML results
  3. `regress.py` - a module for interfacing with a variety of `scikit-learn`-based regression models
+
 Note: Addition of new ML models can be accomplished by adding a build method (2 lines) to `regress.py`
+and adding flags and parameters to the beginning of `ML_optical.py` 
 
 ## Data set
 
@@ -68,8 +71,9 @@ where each row of the file is a feature vector of the sample.
 
 ### Target optical or user-specified data
 For optical data, the `struct_data.py` module includes
-code for loading absorption peaks that were taken from measured spectra
-reported within the [Science-SoftCon UV/Vis+ Spectra Database](http://www.science-softcon.de/),
+code for loading absorption peaks read approximately
+from publications found in the 
+[Science-SoftCon UV/Vis+ Spectra Database](http://www.science-softcon.de/),
 as well as the (attempted) corresponding peaks obtained 
 by post-processing an LDA TD-DFT computation.
 The user has several options for targets when running `ML_optical.py`:
@@ -96,16 +100,17 @@ only floating point numbers.
 
 By default, when `ML_optical.py` is run,
 molecule structures are read in from `.xyz` structural data files
-and processed into `MolStruct` (`molstruct.py`) objects.
+and processed into `MolStruct` objects (`molstruct.py`).
 A set of `MolStruct` objects is constructed by the `struct_data.py` module,
 one `MolStruct` for each of the molecule names in the file `mols.txt`.
 
 The Coulomb matrices from the `MolStruct` objects 
-are loaded into a Coulomb matrix database (`cmat_dtb.py`) 
+are loaded into a `Cmat_Dtb` object (`cmat_dtb.py`) 
 which performs further operations on the set of Coulomb Matrices
 to form sensible feature-vector inputs from them.
 
-PaDel feature dictionaries are saved in `mol_data/<mol>/<mol>.pdl`.
+PaDel feature dictionaries from `mol_data/<mol>/<mol>.pdl`
+are loaded into a `PaDel_Dtb` object (`padel_dtb.py`).
 One PaDel dictionary is loaded for each molecule in `mols.txt`.
 Then, the dictionary is reduced to contain only the set of features
 that are real valued over the entire data set,
@@ -125,10 +130,10 @@ When `ML_optical.py` is run:
 	where the first line is a computed absorption peak by LDA TD-DFT, 
 	and the second line is the corresponding measured absorption peak
 6. The user is prompted through the selection of features and targets 
-	(control over the models and parameters is best accomplished by editing `ML_optical.py`) 
-7. Plots of training and (leave-one-out) cross-validation errors are generated from `ML_plot_routines.py`
+	(precise control over the models and parameters is best accomplished by editing the first few lines of `ML_optical.py`) 
+7. Plots of training and (leave-one-out) cross-validation errors are generated using `ML_plot_routines.py`
  
-Versions used for development (on OSX Yosemite):
+Versions used for development:
 * `scikit-learn` 0.17 
 * `python` 2.7.6
 
