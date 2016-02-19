@@ -7,6 +7,12 @@ but can be used for arbitrary inputs and targets
 by loading data from files `ML_Xvals.dat` and `ML_yvals.dat`.
 Example data sets are included.
 
+### Fast instructions
+
+Run with `python ML_optical.py`.
+
+Input molecular data is in the `mol_data` directory, 
+or anonymous data can be read in from `ML_Xvals.dat` and `ML_yvals.dat`.
 
 ### Notes 
 
@@ -27,7 +33,7 @@ and then writing a build case for that method in
 This level of completeness
 leaves the code flexible for expansion and/or re-purposing.
 
-In the past, these modules included
+In previous versions, these modules included
 the full range of regression techniques available in scikit-learn
 including the development version (for multilayer perceptron models),
 unsupervised feature exploration (PCA, clustering),
@@ -47,8 +53,8 @@ The main run script is `ML_optical.py`.
  3. `PaDel_Dtb` (`padel_dtb.py`) - operates on PaDel molecule descriptor data 
 
 Note: This version of the code could have `cmat_dtb.py` and `padel_dtb.py` as modules.
-They are classes because a previous version of the code instantiated multiple
-distinct databases of each type. 
+They are classes because, in previous (and maybe future) versions, 
+multiple distinct databases would exist at one time.
 
 ### Modules
  1. `struct_data.py` - builds and operates on `MolStruct` objects for all molecules in `mols.txt`

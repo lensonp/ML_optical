@@ -6,8 +6,8 @@ def plot_training(y_target,y_pred,fignum):
 	plt.figure(fignum)
 	plt.plot(y_target,y_pred,'ob')
 	plt.plot((np.min(y_target),np.max(y_target)),(np.min(y_target),np.max(y_target)),'k')
-	plt.xlabel('target value')
-	plt.ylabel('trained value')
+	plt.xlabel('target value (standardized)')
+	plt.ylabel('trained value (standardized)')
 
 # compare predictions to targets for cross validation
 def plot_validation(y_target,y_val,fignum):
@@ -19,13 +19,15 @@ def plot_validation(y_target,y_val,fignum):
 	space = (np.max(y_target)-np.min(y_target))*0.1
 	plt.text(np.min(y_target)+space, np.max(y_target)-space, '{} outliers removed'.format(n_out)) 
 	plt.text( np.min(y_target)+space, np.max(y_target)-2*space, 'mean err of remaining: {}'.format(np.mean(np.abs(y_val-y_target))) ) 
-	plt.xlabel('target value')
-	plt.ylabel('cross-validated value')
+	plt.xlabel('target value (standardized)')
+	plt.ylabel('cross-validated value (standardized)')
 
 # plot or surface of (training or validation) error over selected parameters
 def plot_error(params,y_err,fignum):
 	plt.figure(fignum)
 	plt.plot(params,y_err)
+	plt.xlabel('param 0')
+	plt.ylabel('y error (standard devs)')
 def surf_error(params,y_err,fignum):
 	plt.figure(fignum)
 	minval = np.min(y_err)

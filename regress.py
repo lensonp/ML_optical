@@ -9,48 +9,45 @@ from sklearn.kernel_ridge import KernelRidge
 # BUILD REGRESSION OBJECTS with some default parameters and one or two input parameters
 def build_regressor(method,p):
 	#build a regressor object and plug in parameters p
-	if method == 'PLS':
+	if method == 'RR':
+		rg = Ridge(alpha=10**p)
+	elif method == 'KRR-RBF':
+		rg = KernelRidge(alpha=10**p[0],kernel='rbf',gamma=10**p[1]) 
+	elif method == 'PLS':
 		rg = PLSRegression(n_components=p)
 	elif method == 'LASSO':
 		rg = Lasso(alpha=10**p)
-	elif method == 'RR':
-		rg = Ridge(alpha=10**p)
-	elif method == 'KRR':
-		rg = KernelRidge(alpha=10**p[0],kernel='rbf',gamma=10**p[1]) 
+#	MLP is only available in sklearn-dev 0.18
 #	elif method == 'MLP':
 #		rg = mlp.MLPRegressor(alpha=10**p,activation='relu',algorithm='l-bfgs',hidden_layer_sizes=(10,)) 
 	else:
 		raise ValueError('method not supported: {}'.format(method))
 	return rg
 
-# test a regression technique: return the useful portions of X and y,
-# the mean distance of each sample from the rest, and the predicted y
-def test_regressor(X,y,method,param_set,stdize=False):
+# test a regression technique: return the predicted y
+def test_regressor(X,y,method,param_set):
 	# clean up any nans and standardize the data
-	X,y,mean_y,std_y,n_samples = prep_data(X,y,stdize)
-	# mean distance from each sample to the rest of the set
-	d = np.array( [ np.mean( [np.linalg.norm(X[j,:]-X[m,:]) for m in range(n_samples)] ) for j in range(n_samples) ] )
+	X_s,y_s,mean_y,std_y,n_samples = prep_data(X,y)
+	# mean distance from each sample to the rest of the set: not used in this version
+	# d = np.array( [ np.mean( [np.linalg.norm(X_s[j,:]-X_s[m,:]) for m in range(n_samples)] ) for j in range(n_samples) ] )
 	nparams = len(param_set)
 	y_pred = [None]*nparams
 	for k in range(nparams):
 		p = param_set[k]
 		# build and fit the regressor
 		rg = build_regressor(method,p)
-		rg.fit(X,y)
-		y_pred[k] = rg.predict(X)
-		if stdize:
-			y_pred[k] = y_pred[k]*std_y + mean_y 
-		print 'params: {} \n mean absolute training error: {} \n (mean, SD of y: {}, {})'.format(
-		p,np.mean(np.abs(y_pred[k]-(y*std_y+mean_y))),mean_y,std_y)
-	if stdize:
-		y = y*std_y + mean_y 
-	return X, y, d, y_pred
+		rg.fit(X_s,y_s)
+		y_pred[k] = rg.predict(X_s)
+		print 'params: {} \n mean abs training error (standard devs): {} \n (mean, std of y: {}, {})'.format(
+		p,np.mean(np.abs(y_pred[k]-y_s)),mean_y,std_y)
+	return X_s,y_s,y_pred
 
 # cross-validate a regression technique: return the useful portions of X and y,
 # the mean distance of each sample from the rest, and the cross-predicted y
-def cv_regressor(X,y,method,param_set,stdize=False):
-	X,y,mean_y,std_y,n_samples = prep_data(X,y,stdize)
-	d = np.array( [ np.mean( [np.linalg.norm(X[j,:]-X[m,:]) for m in range(n_samples)] ) for j in range(n_samples) ] )
+def cv_regressor(X,y,method,param_set):
+	X_s,y_s,mean_y,std_y,n_samples = prep_data(X,y)
+	# mean distance from each sample to the rest of the set: not used in this version
+	# d = np.array( [ np.mean( [np.linalg.norm(X_s[j,:]-X_s[m,:]) for m in range(n_samples)] ) for j in range(n_samples) ] )
 	nparams = len(param_set)
 	y_val = [None]*nparams
 	for k in range(nparams):
@@ -59,33 +56,29 @@ def cv_regressor(X,y,method,param_set,stdize=False):
 		rg = build_regressor(method,p)
 		# fit rg to each of the possible LOO sets
 		for m in range(n_samples):
-			X_loo = np.vstack((X[:m],X[m+1:])) 
-			y_loo = np.hstack((y[:m],y[m+1:])) 
-			X_test = X[m,:]
-			y_test = y[m]
+			X_loo = np.vstack((X_s[:m],X_s[m+1:])) 
+			y_loo = np.hstack((y_s[:m],y_s[m+1:])) 
+			X_test = X_s[m,:]
+			y_test = y_s[m]
 			rg.fit(X_loo,y_loo)
 			y_val[k][m] = rg.predict(X_test.reshape(1,-1)) 
-			if stdize:
-				y_val[k][m] = y_val[k][m]*std_y + mean_y 
-		print 'params: {} \n mean absolute CV error: {} \n (mean, SD of y: {}, {})'.format(
-		p,np.mean(np.abs(y_val[k]-(y*std_y+mean_y))),mean_y,std_y)
-	if stdize:
-		y = y*std_y + mean_y 
-	return X, y, d, y_val
+		print 'params: {} \n mean abs CV error (standard devs): {} \n (mean, std of y: {}, {})'.format(
+		p,np.mean(np.abs(y_val[k]-y_s)),mean_y,std_y)
+	return X_s,y_s,y_val
 
-# data preparation: remove nans, standardize if needed
-def prep_data(X,y,stdize):
-	X,y = elim_nan(X,y)
-	X = elim_const(X)
-	n_samples = len(y)
-	if not n_samples == X.shape[0]:
+# data preparation: remove nans, standardize 
+def prep_data(X,y):
+	X_r,y_r = elim_nan(X,y)
+	X_r = elim_const(X_r)
+	n_samples = len(y_r)
+	if not n_samples == X_r.shape[0]:
 		raise ValueError('X and y data do not have matching dimensions')
-	mean_y = np.mean(y)
-	std_y = np.std(y)
-	if stdize:
-		y = (y - mean_y)/std_y
-		X = standardize_cols(X)
-	return X,y,mean_y,std_y,n_samples
+	mean_y = np.mean(y_r)
+	std_y = np.std(y_r)
+	# standardize data
+	y_s = (y_r - mean_y)/std_y
+	X_s = standardize_cols(X_r)
+	return X_s,y_s,mean_y,std_y,n_samples
 
 # beyond this point: minor data management routines
 
