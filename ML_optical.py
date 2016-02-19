@@ -33,7 +33,7 @@ p0 = [ range(-3,5),	#RR l2 regularization
 	range(1,10),	#PLS dimension
 	range(-4,3) ]	#LASSO l1 regularization
 #	range(-3,6) ]	#MLP l2 regularization	- MLP is only in sklearn-dev 0.18
-p1 = range(-5,2) #kernel parameter for methods that take one
+p1 = [ [] , range(-5,2), [] , [] ] #kernel parameter for methods that take one
 # Warning: setting this to true generates a plot for each parameter set 
 plot_all = False
 ###################################################################################
@@ -96,7 +96,7 @@ if run_ML:
 		if run_flags[j]:
 			m = methods[j]
 			if two_p_flags[j]:
-				p = [(p0i,p1i) for p0i in p0[j] for p1i in p1]
+				p = [(p0j,p1j) for p0j in p0[j] for p1j in p1[j]]
 			else:
 				p = p0[j]
 			n_params = len(p)
@@ -112,16 +112,16 @@ if run_ML:
 			#plots or surfaces of training and CV error over param space:
 			if two_p_flags[j]:
 				np0 = len(p0[j])
-				np1 = len(p1)
+				np1 = len(p1[j])
 				# re-package y values in matrices for contour plotting
 				y_terr = np.array( [ np.array([np.mean(np.abs(y_pred[k+l*np1]-y_s)) for k in range(np1)]) for l in range(np0) ] ).T
 				y_cverr = np.array( [ np.array([np.mean(np.abs(y_val[k+l*np1]-y_s_cv)) for k in range(np1)]) for l in range(np0) ] ).T
 				y_randerr = np.array( [ np.array([np.mean(np.abs(y_rand[k+l*np1]-y_s_rand)) for k in range(np1)]) for l in range(np0) ] ).T
-				ML_plot_routines.surf_error([p0[j],p1],y_terr,10)
+				ML_plot_routines.surf_error([p0[j],p1[j]],y_terr,10)
 				plt.title('mean {} training error, standardized'.format(m))
-				ML_plot_routines.surf_error([p0[j],p1],y_cverr,110)
+				ML_plot_routines.surf_error([p0[j],p1[j]],y_cverr,110)
 				plt.title('mean {} cross-validation error, standardized'.format(m))
-				ML_plot_routines.surf_error([p0[j],p1],y_randerr,210)
+				ML_plot_routines.surf_error([p0[j],p1[j]],y_randerr,210)
 				plt.title('mean {} Y-RANDOMIZED cross-validation error, standardized'.format(m))
 			else:
 				y_terr = np.array( [ np.mean(np.abs(y_pred[k]-y_s)) for k in range(n_params)] )
@@ -132,8 +132,8 @@ if run_ML:
 				ML_plot_routines.plot_error(p,y_cverr,110)
 				plt.title('mean {} cross-validation error, standardized'.format(m))
 				ML_plot_routines.plot_error(p,y_randerr,210)
-				plt.title('mean {} RANDOMIZED cross-validation error, standardized'.format(m))
-			print 'CLOSE ALL PLOTS TO CONTINUE.'
+				plt.title('mean {} Y-RANDOMIZED cross-validation error, standardized'.format(m))
+			print 'close plots to continue'
 			plt.show()
 
 			# plots of target and training/validation values 
@@ -149,8 +149,8 @@ if run_ML:
 				ML_plot_routines.plot_validation(y_s_cv,y_val[k],130+k)
 				plt.title('method: {} params: {}'.format(m,p[k]))
 				ML_plot_routines.plot_validation(y_s_rand,y_rand[k],230+k)
-				plt.title('method: {} params: {}, Y RANDOMIZED'.format(m,p[k]))
-			print 'CLOSE ALL PLOTS TO CONTINUE.'
+				plt.title('method: {} params: {}, Y-RANDOMIZED'.format(m,p[k]))
+			print 'close plots to continue'
 			plt.show()
 
 print '------------- ML optical: exit ----------------\n', time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) 
