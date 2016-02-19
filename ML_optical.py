@@ -12,30 +12,38 @@ import matplotlib.pyplot as plt
 
 ###################################################################################
 ##### Flags for controlling this script #####
+
 # Flag for building Coulomb matrix database
 build_cmat=True
+
 # Flag for building PaDel feature database
 build_PaDel=True
+
 # Flag for running ML models
 run_ML=True
 
 ##### Choice of models and parameters #####
+
 # Models
 methods = ['RR','KRR-RBF','PLS','LASSO']#,'MLP']	- MLP is only in sklearn-dev 0.18
+
 # A flag for running each model
 run_flags = [True,True,True,True]
-# A flag indicating whether each model uses two parameters 
-# (e.g. regularization and kernel width)
-two_p_flags = [False,True,False,False]
+
 # Parameter values to try for each method
-p0 = [ range(-3,5),	#RR l2 regularization
-	range(-3,3),	#KRR l2 regularization
-	range(1,10),	#PLS dimension
-	range(-4,3) ]	#LASSO l1 regularization
-#	range(-3,6) ]	#MLP l2 regularization	- MLP is only in sklearn-dev 0.18
-p1 = [ [] , range(-5,2), [] , [] ] #kernel parameter for methods that take one
+params = [
+[ range(-3,5) ],				#RR l2 regularization
+[ range(-3,3) , range(-5,2) ],			#KRR-RBF l2 regularization and kernel resolution
+[ range(1,10) ],				#PLS dimension
+[ range(-4,3) ]					#LASSO l1 regularization
+#[range(-3,6)]					#MLP l2 regularization	- MLP is only in sklearn-dev 0.18
+]
+pdim = [ len(pj) for pj in params ]
+
+
 # Warning: setting this to true generates a plot for each parameter set 
 plot_all = False
+
 ###################################################################################
 
 
@@ -95,12 +103,10 @@ if run_ML:
 	for j in range(len(methods)):
 		if run_flags[j]:
 			m = methods[j]
-			if two_p_flags[j]:
-				p = [(p0j,p1j) for p0j in p0[j] for p1j in p1[j]]
-			else:
-				p = p0[j]
-			n_params = len(p)
-
+			p = sklu.extmath.cartesian(params[j]) 
+			np_j = len(p)
+			if pdim[j] == 1: #unpack p
+				p = [p[k][0] for k in range(np_j)]
 			#############################REGRESSIONS: TEST, CROSS-VALIDATE, Y-RANDOMIZED VALIDATE
 			print 'testing regression... \n method: {} '.format(m)
 			X_s,y_s,y_pred = regress.test_regressor(Xvals,yvals,m,p)
@@ -110,39 +116,42 @@ if run_ML:
 			X_s_rand,y_s_rand,y_rand = regress.cv_regressor(Xvals,sklu.shuffle(yvals),m,p)
 
 			#plots or surfaces of training and CV error over param space:
-			if two_p_flags[j]:
-				np0 = len(p0[j])
-				np1 = len(p1[j])
-				# re-package y values in matrices for contour plotting
+			if pdim[j] == 2:
+				np0 = len(params[j][0])
+				np1 = len(params[j][1])
+				# package y values in matrices for contour plotting
 				y_terr = np.array( [ np.array([np.mean(np.abs(y_pred[k+l*np1]-y_s)) for k in range(np1)]) for l in range(np0) ] ).T
 				y_cverr = np.array( [ np.array([np.mean(np.abs(y_val[k+l*np1]-y_s_cv)) for k in range(np1)]) for l in range(np0) ] ).T
 				y_randerr = np.array( [ np.array([np.mean(np.abs(y_rand[k+l*np1]-y_s_rand)) for k in range(np1)]) for l in range(np0) ] ).T
-				ML_plot_routines.surf_error([p0[j],p1[j]],y_terr,10)
+				ML_plot_routines.surf_error([params[j][0],params[j][1]],y_terr,10)
 				plt.title('mean {} training error, standardized'.format(m))
-				ML_plot_routines.surf_error([p0[j],p1[j]],y_cverr,110)
+				ML_plot_routines.surf_error([params[j][0],params[j][1]],y_cverr,110)
 				plt.title('mean {} cross-validation error, standardized'.format(m))
-				ML_plot_routines.surf_error([p0[j],p1[j]],y_randerr,210)
+				ML_plot_routines.surf_error([params[j][0],params[j][1]],y_randerr,210)
 				plt.title('mean {} Y-RANDOMIZED cross-validation error, standardized'.format(m))
-			else:
-				y_terr = np.array( [ np.mean(np.abs(y_pred[k]-y_s)) for k in range(n_params)] )
-				y_cverr = np.array( [ np.mean(np.abs(y_val[k]-y_s_cv)) for k in range(n_params)] )
-				y_randerr = np.array( [ np.mean(np.abs(y_rand[k]-y_s_rand)) for k in range(n_params)] )
+				print 'close plots to continue'
+			elif pdim[j] == 1:
+				y_terr = np.array( [ np.mean(np.abs(y_pred[k]-y_s)) for k in range(np_j)] )
+				y_cverr = np.array( [ np.mean(np.abs(y_val[k]-y_s_cv)) for k in range(np_j)] )
+				y_randerr = np.array( [ np.mean(np.abs(y_rand[k]-y_s_rand)) for k in range(np_j)] )
 				ML_plot_routines.plot_error(p,y_terr,10)
 				plt.title('mean {} training error, standardized'.format(m))
 				ML_plot_routines.plot_error(p,y_cverr,110)
 				plt.title('mean {} cross-validation error, standardized'.format(m))
 				ML_plot_routines.plot_error(p,y_randerr,210)
 				plt.title('mean {} Y-RANDOMIZED cross-validation error, standardized'.format(m))
-			print 'close plots to continue'
+				print 'close plots to continue'
+			else:
+				print 'no plotting routine for {} dimensions'.pdim[j]
 			plt.show()
 
 			# plots of target and training/validation values 
 			if plot_all:
 				# dangerous - going to make plots for each parameter set
-				plot_range = range(n_params)
+				plot_range = range(np)
 			else:
 				# plot only the best-cross-validated parameter set
-				plot_range = [ np.argmin([ np.mean(np.abs(y_val[k]-y_s_cv)) for k in range(n_params)]) ]
+				plot_range = [ np.argmin([ np.mean(np.abs(y_val[k]-y_s_cv)) for k in range(np_j)]) ]
 			for k in plot_range: 
 				ML_plot_routines.plot_training(y_s,y_pred[k],30+k)
 				plt.title('method: {} params: {}'.format(m,p[k]))

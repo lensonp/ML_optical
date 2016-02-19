@@ -42,6 +42,8 @@ def pkN_all(i_pk):
 			else:
 				wpk_err=float('nan')
 		else:
+			wpk=float('nan')
+			wpk_comp=float('nan')
 			wpk_err=float('nan')
 		pkN.append(wpk)
 		pkN_comp.append(wpk_comp)

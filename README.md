@@ -18,10 +18,6 @@ or anonymous data can be read in from `ML_Xvals.dat` and `ML_yvals.dat`.
 
 The main run script for the code is `ML_optical.py`. 
 Much of the functionality can be adjusted by editing this script.
-While it would be possible to refine the user interface 
-so that one would never need to edit the main run script,
-this would result in a lot of command-line I/O
-with diminishing productivity returns.
 
 These modules were a working part of a larger research project.
 They are meant to streamline the testing and validation of models
@@ -90,9 +86,10 @@ The user has several options for targets when running `ML_optical.py`:
 3. An anonymous data set loaded by reading a file `ML_yvals.dat`
 
 Note:  
-Very little explicit checking is performed on the input data.
-The code may throw errors on poorly formed inputs. 
-
+A choice of absorption peak index is prompted for when working with the absorption data.
+The code will work for the 0th through the 5th absorption peaks, 
+but the data sets are very sparse for peaks 2-5.
+The code will crash for peak 6, because none of the spectra used here have more than 6 peaks. 
 
 ## Instructions
 

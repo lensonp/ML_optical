@@ -24,7 +24,7 @@ def build_regressor(method,p):
 		raise ValueError('method not supported: {}'.format(method))
 	return rg
 
-# test a regression technique: return the predicted y
+# test a regression technique: return the standardized training data and the predicted y
 def test_regressor(X,y,method,param_set):
 	# clean up any nans and standardize the data
 	X_s,y_s,mean_y,std_y,n_samples = prep_data(X,y)
@@ -42,8 +42,8 @@ def test_regressor(X,y,method,param_set):
 		p,np.mean(np.abs(y_pred[k]-y_s)),mean_y,std_y)
 	return X_s,y_s,y_pred
 
-# cross-validate a regression technique: return the useful portions of X and y,
-# the mean distance of each sample from the rest, and the cross-predicted y
+# cross-validate a regression technique: 
+# return the standardized training data and the cross-predicted y
 def cv_regressor(X,y,method,param_set):
 	X_s,y_s,mean_y,std_y,n_samples = prep_data(X,y)
 	# mean distance from each sample to the rest of the set: not used in this version
