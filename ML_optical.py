@@ -148,7 +148,7 @@ if run_ML:
 			# plots of target and training/validation values 
 			if plot_all:
 				# dangerous - going to make plots for each parameter set
-				plot_range = range(np)
+				plot_range = range(np_j)
 			else:
 				# plot only the best-cross-validated parameter set
 				plot_range = [ np.argmin([ np.mean(np.abs(y_val[k]-y_s_cv)) for k in range(np_j)]) ]
