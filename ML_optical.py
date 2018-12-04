@@ -153,12 +153,12 @@ if run_ML:
 				# plot only the best-cross-validated parameter set
 				plot_range = [ np.argmin([ np.mean(np.abs(y_val[k]-y_s_cv)) for k in range(np_j)]) ]
 			for k in plot_range: 
-				ML_plot_routines.plot_training(y_s,y_pred[k],30+k)
-				plt.title('method: {} params: {}'.format(m,p[k]))
-				ML_plot_routines.plot_validation(y_s_cv,y_val[k],130+k)
-				plt.title('method: {} params: {}'.format(m,p[k]))
-				ML_plot_routines.plot_validation(y_s_rand,y_rand[k],230+k)
-				plt.title('method: {} params: {}, Y-RANDOMIZED'.format(m,p[k]))
+				ML_plot_routines.plot_training(y_s,y_pred[k],30+k,output=True)
+				print 'method: {} params: {}'.format(m,p[k])
+				ML_plot_routines.plot_validation(y_s_cv,y_val[k],130+k,output=True)
+				print 'method: {} params: {}'.format(m,p[k])
+				ML_plot_routines.plot_validation(y_s_rand,y_rand[k],230+k,output=False)
+				print 'method: {} params: {}, Y-RANDOMIZED'.format(m,p[k])
 			print 'close plots to continue'
 			plt.show()
 
