@@ -80,8 +80,8 @@ if run_ML:
 		Xvals = pdldata.pdl_matrix()
 	elif X_flag == 2:
 		print 'loading ML_Xvals.dat and ML_yvals.dat (anonymous units)'
-		Xvals = np.array( [ np.array(line.split(),dtype=float) for k,line in enumerate(open('ML_Xvals.dat','r')) ] )
-		yvals = np.array( [ float(line) for k,line in enumerate(open('ML_yvals.dat','r')) ] ) 
+		Xvals = np.array( [ np.array(line.split(),dtype=float) for k,line in enumerate(open('data/ML_Xvals.dat','r')) ] )
+		yvals = np.array( [ float(line) for k,line in enumerate(open('data/ML_yvals.dat','r')) ] ) 
 	else:
 		raise ValueError('selection not understood: {} '.format(X_flag))
 	if not X_flag == 2:

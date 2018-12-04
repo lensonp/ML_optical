@@ -4,7 +4,7 @@ import numpy as np
 print 'loading molecule structure data'
 
 # read in molecule names
-mol_file='mols.txt'
+mol_file='data/mols.txt'
 f=open(mol_file,'r')
 mol_list=[]
 for k,line in enumerate(f):
